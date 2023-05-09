@@ -1,8 +1,8 @@
 #include "graph.h"
 #include <queue>
 #include <list>
-#include <unordered_map>
 #include <map>
+#include "pqueue.h"
 
 int main()
 {
@@ -15,13 +15,13 @@ int main()
     G.find_node("F")->add_neighbour({{"A",1}});
     G.find_node("G")->add_neighbour({{"E",1}});
 
-    //Maps the node to the total cost of reaching the node
+    //Frontier 
+    pqueue frontier;
+    //Maps the node name to the total cost of reaching the node
     std::map<std::string,int> node_cost;
     auto start = G.find_node("D");
-    frontier(*start);
-   
-    std::list<Node> reached;
-    reached.push_back(*start);
+    frontier["D"]=0;
+    node_cost["D"] = 0;
 
     /*
         map came_from keeps track of the node it came from.
@@ -30,25 +30,26 @@ int main()
 
     while(!frontier.empty())
     {
-        auto current = frontier.front();
-        frontier.pop();
-        auto curr_it = G.find_node(current.name);
-       for(auto& next_edge: G.get_neighbours(current.name))
+        //Assings and removes the element the queue
+        auto current_node_name = frontier.front();
+        auto curr_it = G.find_node(current_node_name);
+       for(auto& next_edge: G.get_neighbours(current_node_name))
         {
             auto next_node_it = G.find_node(next_edge.first);
 
-            auto it = std::find(reached.begin(),reached.end(),*next_node_it);
+            int cost_to_go = node_cost[current_node_name]+next_edge.second;
 
-            if(it == reached.end()){
-                reached.push_back(*next_node_it);
-                came_from[next_node_it] = curr_it;
-                frontier.push(*next_node_it);
+            if(node_cost.find(next_edge.first)==node_cost.end() ||node_cost[next_edge.first]>=cost_to_go) 
+            {
+                    node_cost[next_edge.first]=cost_to_go;
+                    frontier[next_edge.first] = cost_to_go;
+                    came_from[next_node_it]=curr_it;
             }
+            
         }
     }
 
-    for(auto node:reached)
-        std::cout<<node.name<<std::endl;
+    
     
     auto goal_node=G.find_node("G");
     auto current_node = goal_node;

@@ -1,23 +1,25 @@
 #include "pqueue.h"
 #include <algorithm>
-int a;
+
 int& pqueue::operator[](std::string key){
-    // auto it = std::find(v.begin(), v.end(), [key](std::pair<std::string, int>& elem){return elem.first == key;}); 
-    std::cout<<key<<std::endl;
-    // if(it != v.end())
-    //     return it->second;
-    // else    
-    // {
-    //     std::pair<std::string, int>p;
-    //     v.push_back(p);
-    //     auto it = v.end()-1;
-    //     return it->second;
-    // }
-    a = 0;
-    return a;
+    auto it = std::find_if(v.begin(), v.end(), [key](std::pair<std::string, int>& elem){return elem.first == key;}); 
+    if(it == v.end())   
+    {
+        std::pair<std::string, int>p;
+        p.first = key;
+        v.push_back(p);
+        it = v.end()-1;
+        
+    }
+    return it->second;
 }
 
-std::string pqueue::top(){
+const int& pqueue::operator[](std::string key) const{
+    auto it = std::find_if(v.begin(), v.end(), [key](const std::pair<std::string, int>& elem){return elem.first == key;}); 
+    return it->second;
+}
+
+std::string pqueue::front(){
     reinitialize_q();
     auto key = v.back().first;
     v.pop_back();
@@ -34,4 +36,19 @@ void pqueue::reinitialize_q()
     
 }
 
+void pqueue::insert(std::string key, int value){
+    std::pair<std::string, int>p;
+    p.first = key;
+    p.second = value;
+    v.push_back(p);
+    _v_updated = true;
 
+}
+
+bool pqueue::empty(){
+    return v.empty();
+}
+
+size_t pqueue::size(){
+    return v.size();
+}

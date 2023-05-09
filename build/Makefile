@@ -2,11 +2,12 @@
 TEST = test
 DJIKSTRA = djikstra
 PQUEUE = pqueue
+GRAPH = graph
 BUILD = .
 
 
 djikstra:clean
-	g++ -Wall ../$(DJIKSTRA).cpp -o $(BUILD)/$(DJIKSTRA)
+	g++ -Wall ../$(DJIKSTRA).cpp ../graph.cpp ../pqueue.cpp ../node.cpp -o $(BUILD)/$(DJIKSTRA)
 
 pqueue.o: 
 	g++ -Wall -o -c  ../$(PQUEUE).cpp ../$(PQUEUE).h
